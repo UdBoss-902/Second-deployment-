@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Samuel David — CEO, UDBOSS AI</title>
+<meta name="description" content="Samuel David — CEO of UDBOSS AI. Builder of safe systems. Portfolio." />
+<style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#6ee7b7;
+      --accent-2:#60a5fa;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      --maxw:1100px;
+      --ff-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --transition: 240ms cubic-bezier(.22,.9,.28,1);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--ff-sans);
+      background:
+        linear-gradient(180deg, rgba(12,17,28,1) 0%, rgba(8,11,18,1) 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:48px 20px;
+      display:flex;
+      justify-content:center;
+    }
+    .wrap{
+      width:100%;
+      max-width:var(--maxw);
+    }
+
+    /* Header / Hero */
+    header{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:28px;
+      align-items:center;
+      margin-bottom:32px;
+    }
+    @media (max-width:880px){
+      header{grid-template-columns:1fr; padding-bottom:12px}
+    }
+    .hero-card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow: 0 6px 24px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      backdrop-filter: blur(6px);
+      transition:transform var(--transition);
+    }
+    .hero-card:focus-within, .hero-card:hover{transform:translateY(-6px)}
+    .eyebrow{color:var(--muted); font-weight:600; letter-spacing:0.06em; font-size:13px}
+    h1{margin:8px 0 6px; font-size:28px}
+    h1 small{display:block; font-size:14px; color:var(--muted); font-weight:600}
+    p.lead{color:var(--muted); margin:12px 0 18px; max-width:54ch}
+    .cta-row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#042028; font-weight:700; border:none;
+      box-shadow: 0 6px 18px rgba(96,165,250,0.12);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .btn.secondary{
+      background:transparent; color:var(--accent-2); border:1px solid rgba(96,165,250,0.12); font-weight:600;
+    }
+    .btn:active{transform:translateY(1px)}
+    .profile{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:20px;
+      display:flex; flex-direction:column; gap:12px; align-items:center;
+      text-align:center;
+    }
+    .avatar{
+      width:120px; height:120px; border-radius:20px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:36px; color:#042028;
+      box-shadow:0 8px 30px rgba(99,102,241,0.08);
+    }
+    .role{color:var(--muted); font-weight:700}
+    .stat-row{display:flex; gap:12px; margin-top:6px}
+    .stat{background:var(--glass); padding:8px 12px; border-radius:10px; font-weight:700; color:var(--muted); font-size:13px}
+
+    /* Sections */
+    section{margin:22px 0}
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: repeat(3,1fr);
+    }
+    @media (max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:600px){ .grid{grid-template-columns:1fr} .header-grid{grid-template-columns:1fr} }
+
+    .card{
+      background:var(--card); padding:18px; border-radius:12px; box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .card:hover{transform:translateY(-6px); box-shadow:0 16px 40px rgba(2,6,23,0.7)}
+    .project-title{font-weight:800; font-size:16px; margin-bottom:6px}
+    .project-desc{color:var(--muted); font-size:14px; margin-bottom:12px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{background:rgba(255,255,255,0.03); padding:6px 8px; border-radius:9px; font-size:12px; color:var(--muted)}
+
+    /* Skills */
+    .skill{
+      display:flex; justify-content:space-between; align-items:center; gap:12px; margin:10px 0;
+    }
+    .bar{
+      height:10px; background:rgba(255,255,255,0.03); border-radius:999px; width:100%; overflow:hidden;
+    }
+    .bar>i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:50%; transition:width 700ms ease}
+
+    /* Contact */
+    form{display:flex; flex-direction:column; gap:10px}
+    input,textarea{
+      background:transparent; border:1px solid rgba(255,255,255,0.04); padding:12px; color:inherit; border-radius:9px;
+      outline:none; transition:border-color var(--transition), transform var(--transition);
+    }
+    input:focus,textarea:focus{border-color:rgba(96,165,250,0.16); transform:translateY(-2px)}
+    .muted{color:var(--muted); font-size:13px}
+
+    footer{margin-top:30px; color:var(--muted); font-size:13px; text-align:center}
+
+    /* Tiny utilities */
+    .row{display:flex; gap:12px; align-items:center}
+    .center{display:flex; align-items:center; justify-content:center}
+    .sr-only{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+    /* Animations */
+    [data-animate]{opacity:0; transform:translateY(8px); transition:opacity 520ms var(--transition), transform 520ms var(--transition)}
+    [data-animate].in{opacity:1; transform:none}
+</style>
+</head>
+<body>
+<div class="wrap" aria-live="polite">
+<header>
+<div class="hero-card" role="region" aria-label="Intro">
+<div class="eyebrow">Samuel David — CEO</div>
+<h1>Samuel David<br/><small>CEO, UDBOSS AI</small></h1>
+<p class="lead">I build safe, human‑first systems that solve real problems. Brick by brick, I design with purpose, ship with discipline, and iterate until the Empire stands unshakable.</p>
+<div class="cta-row">
+<button class="btn" id="contactBtn" aria-controls="contact">Contact Me</button>
+<a class="btn secondary" href="#projects">View Projects</a>
+</div>
+</div>
+
+<aside class="profile" aria-label="Profile card">
+<div class="avatar" aria-hidden="true">SD</div>
+<div style="font-weight:800">Samuel David</div>
+<div class="role">CEO, UDBOSS AI</div>
+<div class="stat-row" aria-hidden="true">
+<div class="stat">10+ Projects</div>
+<div class="stat">Enterprise Focus</div>
+</div>
+<div class="muted">Building Safe, Happy, Engaging systems</div>
+</aside>
+</header>
+
+<main>
+<section id="about" aria-labelledby="about-h">
+<h2 id="about-h" style="margin:0 0 12px">About</h2>
+<div class="card" data-animate>
+<p style="margin:0 0 8px">I lead UDBOSS AI with a craftsman mindset: define the problem, design with emotion and clarity, build components that scale, and iterate until outcomes improve lives.</p>
+<p class="muted" style="margin:0">Specialties: Product strategy, system design, frontend craftsmanship, backend architecture, ethical AI.</p>
+</div>
+</section>
+
+<section id="projects" aria-labelledby="projects-h">
+<h2 id="projects-h" style="margin:0 0 12px">Selected Projects</h2>
+<div class="grid">
+<article class="card" data-animate>
+<div class="project-title">UDBOSS Dashboard</div>
+<div class="project-desc">A human‑first admin dashboard for monitoring model behavior, user feedback, and safety signals with graceful interactions.</div>
+<div class="chips"><span class="chip">React</span><span class="chip">Django</span><span class="chip">Design System</span></div>
+</article>
+
+<article class="card" data-animate>
+<div class="project-title">Local Impact App</div>
+<div class="project-desc">A lightweight tool to register and track community projects, built for discoverability and low bandwidth.</div>
+<div class="chips"><span class="chip">PWA</span><span class="chip">PostgreSQL</span><span class="chip">i18n</span></div>
+</article>
+
+<article class="card" data-animate>
+<div class="project-title">Safe AI Toolkit</div>
+<div class="project-desc">Toolkit for explainable model outputs, audit trails, and human in the loop correction flows.</div>
+<div class="chips"><span class="chip">Python</span><span class="chip">Explainability</span><span class="chip">Audit</span></div>
+</article>
+</div>
+</section>
+
+<section id="skills" aria-labelledby="skills-h" style="margin-top:20px">
+<h2 id="skills-h" style="margin:0 0 12px">Skills</h2>
+<div class="card" data-animate>
+<div class="skill"><strong>Frontend</strong><div style="width:60%"><div class="bar"><i style="width:88%"></i></div></div></div>
+<div class="skill"><strong>Backend</strong><div style="width:60%"><div class="bar"><i style="width:80%"></i></div></div></div>
+<div class="skill"><strong>Product</strong><div style="width:60%"><div class="bar"><i style="width:92%"></i></div></div></div>
+<div class="skill"><strong>AI Ethics</strong><div style="width:60%"><div class="bar"><i style="width:76%"></i></div></div></div>
+</div>
+</section>
+
+<section id="contact" aria-labelledby="contact-h" style="margin-top:20px">
+<h2 id="contact-h" style="margin:0 0 12px">Contact</h2>
+<div class="card" data-animate>
+<form id="contactForm" aria-describedby="contactHelp" novalidate>
+<label class="sr-only" for="name">Name</label>
+<input id="name" name="name" placeholder="Your name" required aria-required="true" />
+
+<label class="sr-only" for="email">Email</label>
+<input id="email" name="email" type="email" placeholder="you@domain.com" required aria-required="true" />
+
+<label class="sr-only" for="message">Message</label>
+<textarea id="message" name="message" placeholder="Brief message or project idea" rows="4" required aria-required="true"></textarea>
+
+<div class="row" style="justify-content:space-between; align-items:center;">
+<div class="muted" id="contactHelp">I'll respond within 3 business days. Your message is handled with care.</div>
+<button type="submit" class="btn">Send Message</button>
+</div>
+<div id="formStatus" class="muted" role="status" aria-live="polite" style="margin-top:8px; display:none"></div>
+</form>
+</div>
+</section>
+</main>
+
+<footer>
+<div>Samuel David — CEO, UDBOSS AI • Brick by brick the Empire rises</div>
+</footer>
+</div>
+
+<script>
+    // Tiny interactive behaviors and accessibility improvements
+    document.addEventListener('DOMContentLoaded', function(){
+      // reveal animations
+      document.querySelectorAll('[data-animate]').forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('in'), 120 + i*90);
+      });
+
+      // contact button jump
+      document.getElementById('contactBtn').addEventListener('click', function(){
+        document.getElementById('contact').scrollIntoView({behavior:'smooth', block:'center'});
+        document.getElementById('name').focus({preventScroll:true});
+      });
+
+      // simple client validation and optimistic UI
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        status.style.display = 'block';
+        status.textContent = 'Sending message...';
+        const name = form.name.value.trim();
+        const email = form.email.value.trim();
+        const message = form.message.value.trim();
+        if(!name || !email || !message){
+          status.textContent = 'Please complete all fields.';
+          return;
+        }
+        // Optimistic feedback; replace with real POST to your backend
+        try{
+          await fakeSend({name,email,message});
+          status.textContent = 'Message sent. I will respond within 3 business days.';
+          form.reset();
+        }catch(err){
+          status.textContent = 'Network error. Please try again later.';
+        }
+      });
+
+      function fakeSend(payload){
+        return new Promise((resolve, reject)=>{
+          setTimeout(()=>{ Math.random() < 0.95 ? resolve() : reject(); }, 900);
+        });
+      }
+
+      // keyboard accessible skip: focus visible
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'k'&& (e.ctrlKey || e.metaKey)){
+          e.preventDefault();
+          document.getElementById('projects').scrollIntoView({behavior:'smooth'});
+        }
+      });
+    });
+</script>
+</body>
+</html>

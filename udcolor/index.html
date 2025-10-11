@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UDBOSS Color Palette Generator</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #1e1e2f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .palette-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #2e2e44;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    width: 450px;
+    max-width: 95%;
+  }
+  h2 { margin-bottom: 20px; text-align: center; }
+  .colors { display: flex; margin-bottom: 15px; width: 100%; justify-content: space-between; }
+  .color-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .color-box:hover { transform: scale(1.1); }
+  .color-code {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 0.7em;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  button {
+    background: #ff5722;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover { background: #ff784e; transform: scale(1.05); }
+  #message { margin-top: 15px; font-size: 0.9em; color: #4caf50; height: 1em; }
+</style>
+</head>
+<body>
+<div class="palette-container">
+  <h2>UDBOSS Color Palette Generator</h2>
+  <div class="colors" id="colors"></div>
+  <button id="generate">Generate Palette</button>
+  <div id="message"></div>
+</div>
+
+<script>
+const colorsContainer = document.getElementById('colors');
+const generateBtn = document.getElementById('generate');
+const messageEl = document.getElementById('message');
+
+function getRandomColor(){
+  const hex = Math.floor(Math.random()*16777215).toString(16);
+  return "#" + hex.padStart(6,'0');
+}
+
+function generatePalette(){
+  colorsContainer.innerHTML = '';
+  messageEl.textContent = '';
+  for(let i=0;i<5;i++){
+    const color = getRandomColor();
+    const box = document.createElement('div');
+    box.classList.add('color-box');
+    box.style.backgroundColor = color;
+    box.innerHTML = `<div class="color-code">${color}</div>`;
+    box.addEventListener('click', ()=>{
+      navigator.clipboard.writeText(color);
+      messageEl.textContent = `Copied ${color} to clipboard!`;
+      setTimeout(()=>{messageEl.textContent='';},1500);
+    });
+    colorsContainer.appendChild(box);
+  }
+}
+
+// Initial palette
+generatePalette();
+generateBtn.addEventListener('click', generatePalette);
+</script>
+</body>
+</html>

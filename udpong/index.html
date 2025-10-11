@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>UDBOSS Pong</title>
+  <style>
+    body {
+      margin:0; display:flex; justify-content:center; align-items:center;
+      height:100vh; background:#fdf6e3; font-family:sans-serif;
+    }
+    .game {
+      background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
+      padding:20px; text-align:center;
+    }
+    canvas { background:#fefefe; border:2px solid #333; border-radius:8px; display:block; margin:0 auto; }
+    h1 { margin:0 0 10px; }
+    #score { margin:10px 0; font-weight:bold; }
+    button {
+      margin-top:10px; padding:8px 16px; border:none; border-radius:6px;
+      background:#2563eb; color:#fff; font-weight:bold; cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>UDBOSS Pong</h1>
+    <div id="score">Score: 0</div>
+    <canvas id="pong" width="400" height="300"></canvas>
+    <button id="restart">Restart Game</button>
+  </div>
+  <script>
+    const canvas=document.getElementById("pong");
+    const ctx=canvas.getContext("2d");
+    let ball={x:200,y:150,r:10,dx:3,dy:3};
+    let paddle={x:160,y:280,w:80,h:10};
+    let score=0, running=true;
+
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // ball
+      ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);
+      ctx.fillStyle="orange"; ctx.fill(); ctx.closePath();
+      // paddle
+      ctx.fillStyle="steelblue";
+      ctx.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);
+    }
+
+    function update(){
+      if(!running) return;
+      ball.x+=ball.dx; ball.y+=ball.dy;
+      // walls
+      if(ball.x+ball.r>canvas.width||ball.x-ball.r<0) ball.dx*=-1;
+      if(ball.y-ball.r<0) ball.dy*=-1;
+      // paddle collision
+      if(ball.y+ball.r>paddle.y && ball.x>paddle.x && ball.x<paddle.x+paddle.w){
+        ball.dy*=-1; score++; document.getElementById("score").textContent="Score: "+score;
+      }
+      // miss
+      if(ball.y-ball.r>canvas.height){ running=false; document.getElementById("score").textContent="Game Over! Final Score: "+score; }
+    }
+
+    function loop(){ draw(); update(); requestAnimationFrame(loop); }
+    loop();
+
+    // paddle control
+    document.addEventListener("mousemove",e=>{
+      const rect=canvas.getBoundingClientRect();
+      paddle.x=e.clientX-rect.left-paddle.w/2;
+    });
+
+    document.getElementById("restart").addEventListener("click",()=>{
+      ball={x:200,y:150,r:10,dx:3,dy:3}; paddle.x=160; score=0; running=true;
+      document.getElementById("score").textContent="Score: 0";
+    });
+  </script>
+</body>
+</html>

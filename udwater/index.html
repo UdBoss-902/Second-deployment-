@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UDBOSS Water Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #3b82f6, #1e3a8a);
+      color: #fff; text-align: center; padding: 40px;
+    }
+    h1 { margin-bottom: 10px; }
+    #glass {
+      width: 200px; height: 300px; margin: 20px auto;
+      border: 4px solid #fff; border-radius: 20px;
+      position: relative; overflow: hidden;
+      background: rgba(255,255,255,0.1);
+    }
+    #water {
+      position: absolute; bottom: 0; left: 0;
+      width: 100%; height: 0%;
+      background: linear-gradient(to top, #60a5fa, #93c5fd);
+      transition: height 0.5s ease;
+    }
+    button {
+      margin: 10px; padding: 12px 20px;
+      border: none; border-radius: 8px;
+      background: #2563eb; color: #fff;
+      font-size: 1rem; cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+    #message { margin-top: 20px; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>💧 UDBOSS Water Tracker 💧</h1>
+  <p>Stay hydrated, stay unstoppable.</p>
+  
+  <div id="glass">
+    <div id="water"></div>
+  </div>
+  
+  <button onclick="drink()">+1 Cup</button>
+  <button onclick="reset()">Reset</button>
+  
+  <div id="message">0 / 8 cups</div>
+  
+  <script>
+    let cups = 0, goal = 8;
+    const water = document.getElementById('water');
+    const message = document.getElementById('message');
+    
+    function drink() {
+      if (cups < goal) {
+        cups++;
+        update();
+      }
+    }
+    function reset() {
+      cups = 0;
+      update();
+    }
+    function update() {
+      let percent = (cups / goal) * 100;
+      water.style.height = percent + "%";
+      message.textContent = `${cups} / ${goal} cups`;
+      if (cups === goal) {
+        message.textContent = "🎉 Goal reached! Empire strong!";
+      }
+    }
+  </script>
+</body>
+</html>

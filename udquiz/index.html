@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UDBOSS Ultimate Quiz</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #1e1e2f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .quiz-container {
+    background: #2e2e44;
+    width: 450px;
+    max-width: 95%;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+  h2 { text-align: center; margin-bottom: 20px; }
+  .question { font-size: 1.2em; margin-bottom: 15px; }
+  .answers button {
+    display: block;
+    width: 100%;
+    background: #555577;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    margin: 6px 0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1em;
+  }
+  .answers button:hover { background: #ff5722; transform: scale(1.03); }
+  .answers button.correct { background: #4caf50; }
+  .answers button.wrong { background: #f44336; }
+  .progress { margin-bottom: 15px; text-align: center; }
+  #score { text-align: center; font-size: 1.3em; margin-top: 20px; }
+  #timer { text-align: center; font-size: 1.1em; margin-bottom: 10px; color: #ffcc00; }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+  <h2>UDBOSS Ultimate Quiz</h2>
+  <div id="progress"></div>
+  <div id="timer"></div>
+  <div id="quiz"></div>
+  <div id="score"></div>
+</div>
+
+<script>
+const quizData = [
+  {question:"What is the capital of Nigeria?", options:["Lagos","Abuja","Kano","Port Harcourt"], correct:1, explanation:"Abuja is Nigeria's capital."},
+  {question:"Which language runs in the browser?", options:["Java","C","Python","JavaScript"], correct:3, explanation:"JavaScript runs in the browser."},
+  {question:"CSS stands for?", options:["Creative Style Sheets","Cascading Style Sheets","Computer Style Sheets","Colorful Style Sheets"], correct:1, explanation:"CSS = Cascading Style Sheets."},
+  {question:"HTML stands for?", options:["Hyper Text Markup Language","High Text Machine Language","Hyperlinking Text Mark Language","Home Tool Markup Language"], correct:0, explanation:"HTML = Hyper Text Markup Language."},
+  {question:"Which is a front-end framework?", options:["Django","React","Flask","Laravel"], correct:1, explanation:"React is a front-end JS framework."},
+  {question:"True or False: Python is only used for web development?", options:["True","False"], correct:1, explanation:"Python is used for web, AI, data analysis, automation, etc."},
+  {question:"Which tag is used for an unordered list?", options:["<ul>","<ol>","<li>","<list>"], correct:0, explanation:"<ul> creates an unordered list."},
+  {question:"Which company developed JavaScript?", options:["Microsoft","Netscape","Apple","Google"], correct:1, explanation:"Netscape developed JavaScript."},
+  {question:"Which symbol is used for comments in JS?", options:["//","#","/* */","<!-- -->"], correct:0, explanation:"// is used for single-line comments."},
+  {question:"What is 2 + 2 * 2?", options:["6","8","4","10"], correct:0, explanation:"2 + 2*2 = 2 + 4 = 6."}
+];
+
+let currentQuiz = 0;
+let score = 0;
+let timer;
+let timeLeft = 15;
+
+const quizEl = document.getElementById('quiz');
+const progressEl = document.getElementById('progress');
+const timerEl = document.getElementById('timer');
+const scoreEl = document.getElementById('score');
+
+function startTimer() {
+  timerEl.textContent = `Time Left: ${timeLeft}s`;
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = `Time Left: ${timeLeft}s`;
+    if(timeLeft <=0){
+      clearInterval(timer);
+      autoNext();
+    }
+  },1000);
+}
+
+function loadQuiz() {
+  quizEl.innerHTML = '';
+  if(currentQuiz >= quizData.length){
+    showScore();
+    return;
+  }
+  timeLeft = 15;
+  startTimer();
+  
+  const q = quizData[currentQuiz];
+  progressEl.textContent = `Question ${currentQuiz+1} of ${quizData.length}`;
+  
+  const questionEl = document.createElement('div');
+  questionEl.classList.add('question');
+  questionEl.textContent = q.question;
+  
+  const answersEl = document.createElement('div');
+  answersEl.classList.add('answers');
+  
+  q.options.forEach((option,i)=>{
+    const btn = document.createElement('button');
+    btn.textContent = option;
+    btn.addEventListener('click', ()=>checkAnswer(i,btn));
+    answersEl.appendChild(btn);
+  });
+  
+  quizEl.appendChild(questionEl);
+  quizEl.appendChild(answersEl);
+}
+
+function checkAnswer(selected, btn){
+  clearInterval(timer);
+  const correct = quizData[currentQuiz].correct;
+  if(selected === correct){
+    score++;
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.answers button').forEach((b,i)=>{
+      if(i===correct) b.classList.add('correct');
+    });
+  }
+  const explanationEl = document.createElement('div');
+  explanationEl.style.marginTop='10px';
+  explanationEl.style.fontSize='0.9em';
+  explanationEl.textContent = quizData[currentQuiz].explanation;
+  quizEl.appendChild(explanationEl);
+
+  setTimeout(()=>{currentQuiz++; loadQuiz();},1500);
+}
+
+function autoNext(){
+  // Highlight correct answer if time ran out
+  const correct = quizData[currentQuiz].correct;
+  document.querySelectorAll('.answers button').forEach((b,i)=>{
+    if(i===correct) b.classList.add('correct');
+  });
+  const explanationEl = document.createElement('div');
+  explanationEl.style.marginTop='10px';
+  explanationEl.style.fontSize='0.9em';
+  explanationEl.textContent = quizData[currentQuiz].explanation;
+  quizEl.appendChild(explanationEl);
+  setTimeout(()=>{currentQuiz++; loadQuiz();},1500);
+}
+
+function showScore(){
+  quizEl.innerHTML = `<h2>You scored ${score} / ${quizData.length}</h2>
+  <button onclick="restartQuiz()">Restart Quiz</button>`;
+  timerEl.textContent = '';
+  progressEl.textContent = '';
+}
+
+function restartQuiz(){
+  currentQuiz = 0;
+  score = 0;
+  loadQuiz();
+}
+
+loadQuiz();
+</script>
+</body>
+</html>

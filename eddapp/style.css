@@ -1,0 +1,255 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    line-height: 1.6;
+  }
+  
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #333;
+    color: #fff;
+  }
+  
+  .navbar .logo {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-links li a {
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Hero */
+  .hero {
+    background-color: red;
+    height: 80vh;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero h1{
+    transform: translateY(-20px);
+    transition: all 0.8s ease-out;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #000711;
+    text-shadow: 2px 2px 5px rgba(7, 7, 7, 0.733); 
+  }
+  .hero h1.show{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero p{
+    font-size: 1.2rem;
+    color: #084397;
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+  .bg-video{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  .hero-content{
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  #icons{
+    width: 20%;
+  }
+
+  .icons{
+    display: flex;
+    justify-content: space-around;
+  }
+  .cta-btn {
+    border-radius: 1rem;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: linear-gradient(90deg, #4f46e5, #818cf8);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  .cta-btn:hover{
+    background-color: #4f46e5;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.5);
+  }
+  
+  /* Features */
+  .features{
+    background-image: url(image/medium-shot-student-looking-book\ -\ Copy.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-color: rgba(7, 7, 7, 0.733);
+    font-size: 110%;
+    padding: 2rem;
+    text-align: center;
+  }
+  .features h2{
+    color: white;
+  }
+  .features h1{
+    color: #647bad;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    border-bottom: 4px solid #4f46e5;
+    font-size: 2.5rem;
+    display: inline-block;
+  }
+  .features p{
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #b8c4dd;
+  }
+  .feature-box{
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+  }
+  #icon{
+    width: 30%;
+  }
+  
+  /* Testimonial */
+  .testimonial{
+    
+    text-align: center;
+    padding: 3rem;
+    background-color: #333;
+    background-blend-mode: multiply;
+    color: white;
+    background-image: url(image/group-young-afro-american-female-student-dressed-black-graduation-gown-campus-as-background.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .testimonial-parent{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+  }
+
+  #stars{
+      width: 5rem;
+  }
+
+  .testimonial h2{
+    font-size: 2rem;
+    font-weight: 700;
+    color: #6786eb;
+  }
+  .testimonial p{
+    font-size: 1.1rem;
+    color: #aebed8;
+    font-style: italic;
+  }
+
+  .testimonial img{
+    width: 5rem;
+    border-radius: 2rem;
+  }
+
+  .testimonial-child{
+    box-shadow: 0 8px 20px ;
+    border-radius: 3rem;
+    background-color: rgba(240, 248, 255, 0.137);
+    margin: 20px;
+    text-align: center;
+    padding: 3rem;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 15px;
+    background: #333;
+    color: #fff;
+    font-size: 0.9rem;
+  }
+
+  a{
+    color: white;
+    text-decoration: none;
+  }
+  .footer-links{
+    display: flex;
+    justify-content: space-around;
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      background: #444;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      z-index: 2;
+      padding: 15px;
+    }
+  
+    .nav-links.show {
+      display: flex;
+      z-index: 3;
+    }
+  
+    .menu-toggle {
+      display: block;
+    }
+  
+    .features {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .feature-box {
+      width: 100%;
+    }
+  }
+
+  img{
+    max-width: 100%;
+  }

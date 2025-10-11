@@ -1,0 +1,356 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UDBOSS — Interactive Daily Focus Board</title>
+  <meta name="description" content="A small, emotional, interactive daily focus board built with HTML, CSS and JavaScript. Saves to localStorage, responsive, accessible, and dynamic.">
+  <style>
+    /* UDBOSS Design System Variables */
+    :root{
+      --bg:#0f1724; /* dark navy */
+      --card:#0b1220;
+      --muted:#98a0b3;
+      --accent:#6ee7b7; /* mint */
+      --accent-2:#60a5fa; /* sky */
+      --danger:#fb7185;
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px;
+      --fw-regular:400;
+      --fw-strong:700;
+    }/* Light theme (used by JS when appropriate) */
+.theme-light{ --bg:#f7fafc; --card:#ffffff; --muted:#475569; --accent:#0ea5a2; --accent-2:#2563eb; --glass: rgba(15,23,42,0.04); color: #0f1724 }
+
+/* Soft morning theme */
+.theme-morning{ --accent:#f59e0b; --accent-2:#fb923c }
+.theme-evening{ --accent:#7c3aed; --accent-2:#06b6d4 }
+.theme-night{ --accent:#60a5fa; --accent-2:#a78bfa }
+
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,var(--bg), #c5c8ce 80%);
+  color: #e6eef8;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+}
+
+/* Container */
+.board{
+  width:min(980px,96vw);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  padding:28px;
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  gap:20px;
+  align-items:start;
+  backdrop-filter: blur(6px);
+}
+
+/* Responsive single column */
+@media (max-width:880px){
+  .board{ grid-template-columns:1fr; padding:18px }
+}
+
+/* Hero / left side */
+.hero{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.title-row{ display:flex; align-items:center; justify-content:space-between; gap:12px }
+h1{ margin:0; font-size:clamp(20px,3.2vw,28px); letter-spacing:-0.4px }
+p.lead{ margin:0; color:var(--muted); font-size:14px }
+
+/* Add task */
+.add{
+  display:flex; gap:12px; align-items:center
+}
+.input{
+  flex:1; display:flex; gap:8px; align-items:center; background:var(--card); border-radius:12px; padding:10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.input input{ background:transparent; border:0; outline:none; color:inherit; font-size:15px; width:100% }
+.btn{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); padding:10px 14px; border-radius:10px; border:0; color:#05202e; font-weight:700; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease }
+.btn:active{ transform:translateY(1px) }
+
+/* Tasks list */
+.tasks{ display:flex; flex-direction:column; gap:10px; margin-top:6px }
+.task{ display:flex; gap:12px; align-items:center; padding:12px; background:linear-gradient(180deg,var(--glass), transparent); border-radius:12px; border:1px solid rgba(255,255,255,0.03); transition:transform .14s ease, box-shadow .14s ease }
+.task:hover{ transform:translateY(-4px); box-shadow: 0 8px 26px rgba(2,6,23,0.5) }
+.task .check{ width:42px; height:42px; border-radius:10px; display:grid; place-items:center; background:transparent; border:1px solid rgba(255,255,255,0.04); cursor:pointer }
+.task .text{ flex:1 }
+.task .meta{ color:var(--muted); font-size:13px }
+
+.task.completed{ opacity:0.6; text-decoration:line-through }
+
+/* Right side — panel */
+.panel{ background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px }
+.panel h3{ margin:0; font-size:16px }
+
+.progress-wrap{ display:flex; gap:12px; align-items:center }
+.progress{ flex:1; height:12px; background:rgba(255,255,255,0.04); border-radius:999px; overflow:hidden }
+.progress > i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .6s cubic-bezier(.2,.9,.2,1) }
+
+.mini{ display:flex; gap:8px; align-items:center; color:var(--muted); font-size:13px }
+
+/* micro interactions */
+.fade-in{ animation:fadeIn .5s ease both }
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px) } to{ opacity:1; transform:none } }
+
+/* footer actions */
+.actions{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap }
+.link{ background:transparent; border:1px dashed rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; font-size:13px; color:var(--muted); cursor:pointer }
+
+/* accessibility focus */
+.btn:focus, .link:focus, .check:focus, .input input:focus{ outline:3px solid rgba(99,102,241,0.12); outline-offset:3px }
+
+/* empty */
+.empty{ padding:24px; text-align:center; color:var(--muted); border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent) }
+
+/* small helpers */
+.muted{ color:var(--muted) }
+
+  </style>
+</head>
+<body>
+  <main class="board" id="app" role="application" aria-labelledby="appTitle">
+    <section class="hero">
+      <div class="title-row">
+        <div>
+          <h1 id="appTitle">Daily Focus Board</h1>
+          <p class="lead">Set 3 meaningful goals for today. Brick by brick — build your Empire.</p>
+        </div>
+        <div class="mini" aria-hidden="true">
+          <div id="timeOfDay">—</div>
+        </div>
+      </div><div class="add" aria-labelledby="addLabel">
+    <label id="addLabel" class="sr-only" for="taskInput">Add task</label>
+    <div class="input" role="search">
+      <input id="taskInput" type="text" inputmode="text" placeholder="Add a focused task (e.g. "Review lecture notes")" aria-label="Add a focused task" />
+    </div>
+    <button id="addBtn" class="btn" aria-label="Add task">Add</button>
+  </div>
+
+  <div class="tasks" id="tasks" aria-live="polite">
+    <!-- tasks injected here -->
+  </div>
+
+  <div class="actions">
+    <button id="clearCompleted" class="link">Clear completed</button>
+    <button id="resetBoard" class="link">Reset board</button>
+  </div>
+
+</section>
+
+<aside class="panel" aria-label="Progress panel">
+  <h3>Progress</h3>
+  <div class="progress-wrap">
+    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+    <div class="mini"><strong id="percent">0%</strong></div>
+  </div>
+
+  <div class="muted">Motivation</div>
+  <blockquote id="quote" class="muted" cite="">"Small steps every day lead to an Empire."</blockquote>
+
+  <div class="muted">Quick Actions</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button id="focusMode" class="link">Enter focus mode</button>
+    <button id="suggest" class="link">Suggest 3 tasks</button>
+    <button id="export" class="link">Export JSON</button>
+  </div>
+
+  <div style="margin-top:auto;color:var(--muted);font-size:12px">UDBOSS — Brick by brick, line by line.</div>
+</aside>
+
+  </main>  <script>
+    /* UDBOSS Interactive Daily Focus Board
+       - Saves tasks to localStorage
+       - Provides progress, theme by time of day, accessibility, and small interactions
+    */
+
+    (function(){
+      const STORAGE_KEY = 'udboss_focus_v1';
+      const tasksEl = document.getElementById('tasks');
+      const input = document.getElementById('taskInput');
+      const addBtn = document.getElementById('addBtn');
+      const progressBar = document.getElementById('progressBar');
+      const percentEl = document.getElementById('percent');
+      const quoteEl = document.getElementById('quote');
+      const timeOfDayEl = document.getElementById('timeOfDay');
+
+      let state = { tasks: [] };
+
+      /* Utility: Generate ID */
+      function uid(){ return Math.random().toString(36).slice(2,9) }
+
+      /* Load from storage */
+      function load(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(raw) state = JSON.parse(raw);
+        }catch(e){ console.warn('load failed', e) }
+      }
+
+      /* Save */
+      function save(){
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }catch(e){ console.warn('save failed', e) }
+      }
+
+      /* Render tasks */
+      function render(){
+        tasksEl.innerHTML = '';
+        if(state.tasks.length === 0){
+          const empty = document.createElement('div'); empty.className='empty fade-in'; empty.textContent='No tasks yet. Add one — start small.';
+          tasksEl.appendChild(empty);
+        }
+
+        state.tasks.forEach(t => {
+          const el = document.createElement('div'); el.className='task fade-in';
+          if(t.completed) el.classList.add('completed');
+
+          // checkbox / toggle
+          const check = document.createElement('button'); check.className='check'; check.setAttribute('aria-label', t.completed ? 'Mark incomplete' : 'Mark complete'); check.setAttribute('aria-pressed', String(!!t.completed));
+          check.innerHTML = t.completed ? '&#10003;' : '';
+          check.addEventListener('click', () => { toggleComplete(t.id) });
+
+          // text
+          const textWrap = document.createElement('div'); textWrap.className='text';
+          const h = document.createElement('div'); h.textContent = t.title; h.style.fontWeight=600; h.style.marginBottom='6px';
+          const meta = document.createElement('div'); meta.className='meta'; meta.textContent = t.note || (new Date(t.created)).toLocaleTimeString();
+          textWrap.appendChild(h); textWrap.appendChild(meta);
+
+          // actions
+          const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
+          const edit = document.createElement('button'); edit.className='link'; edit.textContent='Edit'; edit.addEventListener('click', ()=> editTask(t.id));
+          const del = document.createElement('button'); del.className='link'; del.textContent='Delete'; del.addEventListener('click', ()=> deleteTask(t.id));
+
+          actions.appendChild(edit); actions.appendChild(del);
+
+          el.appendChild(check); el.appendChild(textWrap); el.appendChild(actions);
+          tasksEl.appendChild(el);
+        });
+
+        updateProgress();
+      }
+
+      /* Add */
+      function addTask(title){
+        const trimmed = String(title || '').trim();
+        if(!trimmed) return;
+        state.tasks.unshift({ id: uid(), title: trimmed, note:'', created: Date.now(), completed:false });
+        save(); render(); input.value=''; input.focus();
+      }
+
+      /* Toggle complete */
+      function toggleComplete(id){
+        const t = state.tasks.find(x=>x.id===id); if(!t) return; t.completed = !t.completed; save(); render();
+      }
+
+      /* Edit */
+      function editTask(id){
+        const t = state.tasks.find(x=>x.id===id); if(!t) return;
+        const newTitle = prompt('Edit task', t.title);
+        if(newTitle === null) return; t.title = newTitle.trim() || t.title; save(); render();
+      }
+
+      /* Delete */
+      function deleteTask(id){
+        state.tasks = state.tasks.filter(x=>x.id!==id); save(); render();
+      }
+
+      /* Clear completed */
+      function clearCompleted(){ state.tasks = state.tasks.filter(x=>!x.completed); save(); render(); }
+
+      /* Reset board */
+      function resetBoard(){ if(!confirm('Reset board? This will remove all tasks.')) return; state = { tasks: [] }; save(); render(); }
+
+      /* Progress */
+      function updateProgress(){
+        const total = state.tasks.length || 0; const done = state.tasks.filter(t=>t.completed).length; const pct = total? Math.round((done/total)*100) : 0;
+        progressBar.style.width = pct + '%'; percentEl.textContent = pct + '%';
+      }
+
+      /* Suggest 3 tasks (small starter prompts) */
+      function suggestTasks(){
+        const examples = [
+          'Review 20 minutes of lecture notes',
+          'Write outline for 1 project section (15 mins)',
+          'Practice coding: build one component (30 mins)'
+        ];
+        examples.forEach(e=> addTask(e));
+      }
+
+      /* Focus mode: minimal UI */
+      let focusActive=false;
+      function toggleFocus(){
+        focusActive = !focusActive;
+        document.body.style.transition='background .3s ease';
+        if(focusActive){
+          document.querySelector('.panel').style.opacity='0'; document.querySelector('.panel').style.pointerEvents='none'; document.querySelector('.hero').style.gridColumn='1/-1';
+          document.getElementById('focusMode').textContent='Exit focus mode';
+        }else{
+          document.querySelector('.panel').style.opacity='1'; document.querySelector('.panel').style.pointerEvents='auto';
+          document.getElementById('focusMode').textContent='Enter focus mode';
+        }
+      }
+
+      /* Export JSON */
+      function exportJSON(){ const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='udboss_focus.json'; a.click(); URL.revokeObjectURL(url); }
+
+      /* Helpers: keyboard add */
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ addTask(input.value) } });
+      addBtn.addEventListener('click', ()=> addTask(input.value));
+
+      document.getElementById('clearCompleted').addEventListener('click', clearCompleted);
+      document.getElementById('resetBoard').addEventListener('click', resetBoard);
+      document.getElementById('suggest').addEventListener('click', suggestTasks);
+      document.getElementById('focusMode').addEventListener('click', toggleFocus);
+      document.getElementById('export').addEventListener('click', exportJSON);
+
+      /* Theme by time of day and quote rotator */
+      const QUOTES = [
+        'Small steps every day lead to an Empire.',
+        'Focus, finish, and ship. Brick by brick.',
+        'Design with purpose. Build with discipline.',
+        'Solve a real problem. Repeat.'
+      ];
+      function applyTimeTheme(){
+        const h = new Date().getHours(); const body = document.body;
+        let label='';
+        if(h>=5 && h<11){ body.classList.add('theme-light','theme-morning'); label='Morning'; }
+        else if(h>=11 && h<17){ body.classList.add('theme-light'); body.classList.remove('theme-morning','theme-evening','theme-night'); label='Day'; }
+        else if(h>=17 && h<20){ body.classList.add('theme-evening'); label='Evening' }
+        else{ body.classList.add('theme-night'); label='Night' }
+        timeOfDayEl.textContent = label;
+        // choose quote
+        quoteEl.textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+      }
+
+      /* Init */
+      function init(){ load(); applyTimeTheme(); render();
+        // small accessibility: focus input on load
+        setTimeout(()=> input.focus(), 300);
+
+        // show a tiny check to confirm saving works
+        window.addEventListener('storage', ()=>{ load(); render(); });
+      }
+
+      // Run
+      init();
+
+      // Expose for debugging (friendly)
+      window.udboss = { state, addTask, clearCompleted, resetBoard };
+
+    })();
+  </script></body>
+</html>
