@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Weather | UDBOSS Empire</title>
+    <style>
+        /* === EMPIRE DESIGN SYSTEM === */
+        :root {
+            --sunny-gradient: linear-gradient(135deg, #FFD700, #FF8C00, #FF4500);
+            --cloudy-gradient: linear-gradient(135deg, #87CEEB, #B0C4DE, #778899);
+            --rainy-gradient: linear-gradient(135deg, #4682B4, #5F9EA0, #2F4F4F);
+            --stormy-gradient: linear-gradient(135deg, #4B0082, #483D8B, #2F4F4F);
+            --night-gradient: linear-gradient(135deg, #0F0F3F, #1A1A5F, #2D2D8F);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            background: var(--sunny-gradient);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* === DYNAMIC CONTAINER === */
+        .weather-app {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === EMOTIONAL HEADER === */
+        .app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* === INTERACTIVE SEARCH === */
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            outline: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* === WEATHER DISPLAY === */
+        .weather-display {
+            text-align: center;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .location {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .date {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .weather-condition {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* === WEATHER ICONS === */
+        .weather-icon {
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* === DETAILS GRID === */
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 1rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* === EMOTIONAL MESSAGES === */
+        .emotional-message {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 1rem;
+            font-style: italic;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        /* === LOADING STATES === */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 600px) {
+            .weather-app {
+                margin: 1rem;
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+
+            .app-title {
+                font-size: 2rem;
+            }
+
+            .temperature {
+                font-size: 3rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+        }
+
+        /* === ERROR STATES === */
+        .error-message {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 1rem;
+            text-align: center;
+            margin-top: 1rem;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- BRICK 1: WEATHER APP CONTAINER -->
+    <div class="weather-app">
+        <!-- SECTION 1: HEADER -->
+        <header class="app-header">
+            <h1 class="app-title">Emotional Weather</h1>
+            <p class="app-subtitle">How does your weather feel today?</p>
+        </header>
+
+        <!-- SECTION 2: SEARCH INTERFACE -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Enter city name..." id="cityInput">
+            <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+
+        <!-- SECTION 3: WEATHER DISPLAY -->
+        <main class="weather-display" id="weatherDisplay">
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p>Connecting to the emotional weather network...</p>
+            </div>
+            
+            <!-- Dynamic content will be inserted here -->
+        </main>
+    </div>
+
+    <script>
+        // === EMPIRE WEATHER ENGINE ===
+        class EmotionalWeather {
+            constructor() {
+                this.apiKey = 'your_api_key_here'; // Replace with actual API key
+                this.weatherDisplay = document.getElementById('weatherDisplay');
+                this.cityInput = document.getElementById('cityInput');
+                this.searchBtn = document.getElementById('searchBtn');
+                
+                this.init();
+            }
+
+            init() {
+                this.searchBtn.addEventListener('click', () => this.searchWeather());
+                this.cityInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.searchWeather();
+                });
+
+                // Load default city on start
+                this.loadWeather('New York');
+            }
+
+            async loadWeather(city) {
+                this.showLoading();
+                
+                try {
+                    // Simulate API call with mock data for demo
+                    await this.delay(1000);
+                    const weatherData = this.generateMockWeatherData(city);
+                    this.displayWeather(weatherData);
+                    this.applyEmotionalTheme(weatherData.condition);
+                } catch (error) {
+                    this.showError('Failed to load weather data');
+                }
+            }
+
+            async searchWeather() {
+                const city = this.cityInput.value.trim();
+                if (!city) {
+                    this.showError('Please enter a city name');
+                    return;
+                }
+
+                await this.loadWeather(city);
+            }
+
+            displayWeather(data) {
+                const emotionalMessages = {
+                    'sunny': "Perfect day for adventure! The sun is smiling with you ☀️",
+                    'cloudy': "Cozy clouds blanket the sky. Perfect for creative work 🌤️",
+                    'rainy': "Rain washes the world clean. A day for reflection 🌧️",
+                    'stormy': "Nature's power show! Stay safe and enjoy the energy ⚡",
+                    'night': "The night sky whispers secrets. Perfect for dreaming 🌙"
+                };
+
+                this.weatherDisplay.innerHTML = `
+                    <div class="location">${data.city}, ${data.country}</div>
+                    <div class="date">${new Date().toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    })}</div>
+                    
+                    <div class="temperature">${data.temperature}°C</div>
+                    
+                    <div class="weather-condition">
+                        <span class="weather-icon">${this.getWeatherIcon(data.condition)}</span>
+                        <span>${data.condition.charAt(0).toUpperCase() + data.condition.slice(1)}</span>
+                    </div>
+
+                    <div class="weather-details">
+                        <div class="detail-card">
+                            <div class="detail-label">Feels Like</div>
+                            <div class="detail-value">${data.feelsLike}°C</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Humidity</div>
+                            <div class="detail-value">${data.humidity}%</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Wind</div>
+                            <div class="detail-value">${data.windSpeed} km/h</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Pressure</div>
+                            <div class="detail-value">${data.pressure} hPa</div>
+                        </div>
+                    </div>
+
+                    <div class="emotional-message">
+                        ${emotionalMessages[data.condition] || "Nature is speaking. Listen closely."}
+                    </div>
+                `;
+            }
+
+            getWeatherIcon(condition) {
+                const icons = {
+                    'sunny': '☀️',
+                    'cloudy': '🌤️',
+                    'rainy': '🌧️',
+                    'stormy': '⛈️',
+                    'night': '🌙'
+                };
+                return icons[condition] || '🌈';
+            }
+
+            applyEmotionalTheme(condition) {
+                const body = document.body;
+                const themes = {
+                    'sunny': 'var(--sunny-gradient)',
+                    'cloudy': 'var(--cloudy-gradient)',
+                    'rainy': 'var(--rainy-gradient)',
+                    'stormy': 'var(--stormy-gradient)',
+                    'night': 'var(--night-gradient)'
+                };
+                
+                body.style.background = themes[condition] || themes.sunny;
+            }
+
+            showLoading() {
+                this.weatherDisplay.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Reading nature's emotions...</p>
+                    </div>
+                `;
+            }
+
+            showError(message) {
+                this.weatherDisplay.innerHTML = `
+                    <div class="error-message">
+                        <p>${message}</p>
+                    </div>
+                `;
+                
+                // Shake animation for error
+                this.weatherDisplay.style.animation = 'shake 0.5s ease';
+                setTimeout(() => {
+                    this.weatherDisplay.style.animation = '';
+                }, 500);
+            }
+
+            // Mock data generator for demo
+            generateMockWeatherData(city) {
+                const conditions = ['sunny', 'cloudy', 'rainy', 'stormy', 'night'];
+                const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+                
+                return {
+                    city: city,
+                    country: 'Demo Country',
+                    temperature: Math.floor(Math.random() * 35) + 5,
+                    feelsLike: Math.floor(Math.random() * 35) + 5,
+                    humidity: Math.floor(Math.random() * 80) + 20,
+                    windSpeed: Math.floor(Math.random() * 30) + 5,
+                    pressure: Math.floor(Math.random() * 200) + 1000,
+                    condition: randomCondition
+                };
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // === EMPIRE INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            new EmotionalWeather();
+        });
+    </script>
+</body>
+</html>
